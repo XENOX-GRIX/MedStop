@@ -1,0 +1,58 @@
+<%- include('../includes/head.ejs') %>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<link rel="stylesheet" href="/css/cart.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <!-- <div class="cart__item-list"> -->
+                <div id='map' style='width: 1200px; height: 900px; left: 0%; top: 0;'></div>
+                <div>
+                    <button onclick="tacklePosition()">
+                        Show current position 
+                    </button>
+                </div>
+                <% console.log(products.length); %>
+                <% products.forEach(p => { %>
+
+                    <script>
+                        var x = '<%- p.productId.lati %>'
+                        var y = '<%- p.productId.longi %>'
+                        position = ['<%- user.longitude %>','<%- user.latitude%>' ]
+                        mapboxgl.accessToken = '<%- api%>';
+                        var map = new mapboxgl.Map({
+                            container: 'map',
+                            style: 'mapbox://styles/mapbox/streets-v11',
+                            center: [y, x],
+                            zoom: 16
+                        });
+                        marker = new mapboxgl.Marker()
+                            .setLngLat([y, x])
+                            .addTo(map);
+                            map.on('style.load', () => {
+                                map.setFog({}); // Set the default atmosphere style
+                            });
+
+                        // map.addControl(geolocate);
+                        tacklePosition= () =>{
+                            marker = new mapboxgl.Marker()
+                                .setLngLat(position)
+                                .addTo(map);
+                                map.on('style.load', () => {
+                                map.setFog({})}); // Set the default atmosphere style
+                                map.flyTo({
+                                    center: position, // Fly to the selected target
+                                    duration: 2000, // Animate over 12 seconds
+                                    essential: true // This animation is considered essential with
+                                    //respect to prefers-reduced-motion
+                                });
+                        }
+                    </script>
+                <% }) %>
+                <!-- </div> -->
+            
+        </main>
+        <%- include('../includes/end.ejs') %>
